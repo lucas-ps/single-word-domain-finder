@@ -1,5 +1,8 @@
-from whois import whois
+import random
+
 from nltk.corpus import words
+from threading import Thread
+import requests
 
 max_length = 5
 wordlist = words.words()
@@ -34,7 +37,6 @@ TLDs = ['abb', 'abc', 'ac', 'aco', 'ad', 'ads', 'ae', 'aeg', 'af', 'afl', 'ag', 
 domains = []
 available_domains = []
 
-
 for word in wordlist:
     if word.endswith(tuple(TLDs)):
         for TLD in TLDs:
@@ -44,15 +46,18 @@ for word in wordlist:
                     domain = word[:index] + '.' + word[index:]
                     domains.append(domain)
 
-print(len(domains))
-max_len_domains = [x for x in domains if len(x) >= 5]
-print(max_len_domains)
-print(len(max_len_domains))
+
+def check_domain():
+    while len(domains) >= 1:
+        domain_to_check = random.choice(domains)
+        domains.remove(domain_to_check)
+        try:
+            response = requests.get("http://" + domain_to_check)
+        except:
+            print(f"{domain_to_check} is Available")
+            available_domains.append(domain_to_check)
 
 
-def check_domain(domain_to_check):
-    try:
-        whois(domain_to_check)
-    except:
-        print(f"{domain_to_check} is Available")
-        available_domains.append(domain_to_check)
+for i in range(1000):
+    t = Thread(check_domain())
+    t.start()
