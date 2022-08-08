@@ -41,7 +41,7 @@ for word in wordlist:
     if word.endswith(tuple(TLDs)):
         for TLD in TLDs:
             if word.endswith(TLD):
-                index = word.find(TLD)
+                index = word.rfind(TLD)
                 if index != 0:
                     domain = word[:index] + '.' + word[index:]
                     domains.append(domain)
