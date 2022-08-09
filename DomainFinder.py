@@ -55,7 +55,9 @@ def check_domain():
         try:
             response = requests.get("http://" + domain_to_check)
         except:
-            print(f"{domain_to_check} is Available")
+            domains_file = open('domains.txt', 'a')
+            domains_file.write(domain_to_check + "\n")
+            domains_file.close()
             available_domains.append(domain_to_check)
 
 
