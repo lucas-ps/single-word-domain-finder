@@ -3,9 +3,8 @@ import random
 from nltk.corpus import words
 from threading import Thread
 import requests
+import tqdm
 
-max_length = 5
-wordlist = words.words()
 TLDs = ['abb', 'abc', 'ac', 'aco', 'ad', 'ads', 'ae', 'aeg', 'af', 'afl', 'ag', 'ai', 'aig', 'al', 'am', 'anz', 'ao',
         'aol', 'app', 'aq', 'ar', 'art', 'as', 'at', 'au', 'aw', 'aws', 'ax', 'axa', 'az', 'ba', 'bar', 'bb', 'bbc',
         'bbt', 'bcg', 'bcn', 'bd', 'be', 'bet', 'bf', 'bg', 'bh', 'bi', 'bid', 'bio', 'biz', 'bj', 'bm', 'bms', 'bmw',
@@ -58,6 +57,6 @@ def check_domain():
             available_domains.append(domain_to_check)
 
 
-for i in range(1000):
+for i in range(100):
     t = Thread(check_domain())
     t.start()
