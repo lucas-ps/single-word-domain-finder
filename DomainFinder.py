@@ -36,15 +36,37 @@ TLDs = ['abb', 'abc', 'ac', 'aco', 'ad', 'ads', 'ae', 'aeg', 'af', 'afl', 'ag', 
 popularTLDs = ['ai', 'app', 'com', 'co.uk', 'io', 'gg', 'xyz', 'ly', 'tech']
 domains = []
 available_domains = []
+wordlist = []
 
-for word in wordlist:
-    if word.endswith(tuple(TLDs)):
-        for TLD in TLDs:
-            if word.endswith(TLD):
-                index = word.rfind(TLD)
-                if index != 0:
-                    domain = word[:index] + '.' + word[index:]
-                    domains.append(domain)
+mode = 2
+
+# Use mode 1 to find single word domains eg. http://villag.er
+if mode == 1:
+    wordlist = words.words()
+    for word in wordlist:
+        if word.endswith(tuple(TLDs)):
+            for TLD in TLDs:
+                if word.endswith(TLD):
+                    index = word.rfind(TLD)
+                    if index != 0:
+                        domain = word[:index] + '.' + word[index:]
+                        domains.append(domain)
+
+# Use mode 2 to check words for every TLD in a file called words.txt in the project directory
+elif mode == 2:
+    with open('words.txt', 'r') as file:
+        for line in file:
+            line = line.replace('\n', "")
+            for TLD in popularTLDs:
+                domains.append(line + "." + TLD)
+
+else:
+    print("Invalid mode selected, select 1 to find single word domains using NTLK corpus, select 2 to find domains "
+          "using provided words.txt file ")
+
+print(domains)
+total = len(domains)
+pbar = tqdm.tqdm(total=len(domains), desc="Domains checked")
 
 
 def check_domain():
