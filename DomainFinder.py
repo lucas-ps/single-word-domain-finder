@@ -3,9 +3,8 @@ import random
 from nltk.corpus import words
 from threading import Thread
 import requests
+import tqdm
 
-max_length = 5
-wordlist = words.words()
 TLDs = ['abb', 'abc', 'ac', 'aco', 'ad', 'ads', 'ae', 'aeg', 'af', 'afl', 'ag', 'ai', 'aig', 'al', 'am', 'anz', 'ao',
         'aol', 'app', 'aq', 'ar', 'art', 'as', 'at', 'au', 'aw', 'aws', 'ax', 'axa', 'az', 'ba', 'bar', 'bb', 'bbc',
         'bbt', 'bcg', 'bcn', 'bd', 'be', 'bet', 'bf', 'bg', 'bh', 'bi', 'bid', 'bio', 'biz', 'bj', 'bm', 'bms', 'bmw',
@@ -34,30 +33,58 @@ TLDs = ['abb', 'abc', 'ac', 'aco', 'ad', 'ads', 'ae', 'aeg', 'af', 'afl', 'ag', 
         'tw', 'tz', 'ua', 'ubs', 'ug', 'uk', 'uno', 'uol', 'ups', 'us', 'uy', 'uz', 'va', 'vc', 've', 'vet', 'vg', 'vi',
         'vig', 'vin', 'vip', 'vn', 'vu', 'wed', 'wf', 'win', 'wme', 'wow', 'ws', 'wtc', 'wtf', 'xin', 'xxx', 'xyz',
         'ye', 'you', 'yt', 'yun', 'za', 'zip', 'zm', 'zw']
+popularTLDs = ['ai', 'app', 'com', 'co.uk', 'io', 'gg', 'xyz', 'ly', 'tech']
 domains = []
 available_domains = []
+wordlist = []
 
-for word in wordlist:
-    if word.endswith(tuple(TLDs)):
-        for TLD in TLDs:
-            if word.endswith(TLD):
-                index = word.rfind(TLD)
-                if index != 0:
-                    domain = word[:index] + '.' + word[index:]
-                    domains.append(domain)
+mode = 2
+
+# Use mode 1 to find single word domains eg. http://villag.er
+if mode == 1:
+    wordlist = words.words()
+    for word in wordlist:
+        if word.endswith(tuple(TLDs)):
+            for TLD in TLDs:
+                if word.endswith(TLD):
+                    index = word.rfind(TLD)
+                    if index != 0:
+                        domain = word[:index] + '.' + word[index:]
+                        domains.append(domain)
+
+# Use mode 2 to check words for every TLD in a file called words.txt in the project directory
+elif mode == 2:
+    with open('words.txt', 'r') as file:
+        for line in file:
+            line = line.replace('\n', "")
+            for TLD in popularTLDs:
+                domains.append(line + "." + TLD)
+
+else:
+    print("Invalid mode selected, select 1 to find single word domains using NTLK corpus, select 2 to find domains "
+          "using provided words.txt file ")
+
+print(domains)
+total = len(domains)
+pbar = tqdm.tqdm(total=len(domains), desc="Domains checked")
 
 
 def check_domain():
     while len(domains) >= 1:
         domain_to_check = random.choice(domains)
         domains.remove(domain_to_check)
+        pbar.update(total - len(domains))
+        pbar.set_postfix({'Domains found': len(available_domains)})
         try:
             response = requests.get("http://" + domain_to_check)
         except:
-            print(f"{domain_to_check} is Available")
+            domains_file = open('domains.txt', 'a')
+            domains_file.write(domain_to_check + "\n")
+            domains_file.close()
             available_domains.append(domain_to_check)
 
 
-for i in range(1000):
+for i in range(100):
     t = Thread(check_domain())
     t.start()
+pbar.close
