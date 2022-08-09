@@ -50,6 +50,8 @@ def check_domain():
     while len(domains) >= 1:
         domain_to_check = random.choice(domains)
         domains.remove(domain_to_check)
+        pbar.update(total - len(domains))
+        pbar.set_postfix({'Domains found': len(available_domains)})
         try:
             response = requests.get("http://" + domain_to_check)
         except:
@@ -60,3 +62,4 @@ def check_domain():
 for i in range(100):
     t = Thread(check_domain())
     t.start()
+pbar.close
