@@ -33,6 +33,7 @@ TLDs = ['abb', 'abc', 'ac', 'aco', 'ad', 'ads', 'ae', 'aeg', 'af', 'afl', 'ag', 
         'tw', 'tz', 'ua', 'ubs', 'ug', 'uk', 'uno', 'uol', 'ups', 'us', 'uy', 'uz', 'va', 'vc', 've', 'vet', 'vg', 'vi',
         'vig', 'vin', 'vip', 'vn', 'vu', 'wed', 'wf', 'win', 'wme', 'wow', 'ws', 'wtc', 'wtf', 'xin', 'xxx', 'xyz',
         'ye', 'you', 'yt', 'yun', 'za', 'zip', 'zm', 'zw']
+popularTLDs = ['ai', 'app', 'com', 'co.uk', 'io', 'gg', 'xyz', 'ly', 'tech']
 domains = []
 available_domains = []
 
